@@ -15,26 +15,38 @@ body {
 .display {
   color: white;
   font-size: 80px;
-  padding: 40px 20px 10px 0;
+  padding: 40px 18px 10px 0;
   text-align: right;
 }
 
 .left {
-  width: 240px;
   float: left;
+  width: 240px;
 }
 
 .right {
-  width: 80px;
   float: right;
+  width: 80px;
 }
 
 button {
+  border-radius: 35px;
   color: white;
-  border-radius: 50px;
-  margin: 5px;
   height: 70px;
+  margin: 5px;
+  outline: none;
+  transition: 0.3s;
   width: 70px;
+}
+
+button:hover {
+  filter: brightness(210%);
+  cursor: pointer;
+}
+
+.other:hover,
+.operation:hover {
+  filter: brightness(130%);
 }
 
 .other,
@@ -62,4 +74,3 @@ button {
   background-color: #ee9b34;
   font-size: 2.5em;
 }
-
