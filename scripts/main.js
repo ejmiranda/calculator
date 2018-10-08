@@ -1,9 +1,28 @@
 const output = document.querySelector(`.output`);
 const clear = document.querySelector(`.clear`);
+const sign = document.querySelector(`.sign`);
+const perc = document.querySelector(`.perc`);
 const numbers = document.querySelectorAll(`.number`);
 
 clear.addEventListener(`click`, () => {
   output.textContent = `0`;
+});
+
+sign.addEventListener(`click`, () => {
+  let string = output.textContent;
+  if (string.startsWith(`-`)) {
+    output.textContent = string.substring(1);
+  } else {
+    output.textContent = `-${string}`;
+  }
+});
+
+perc.addEventListener(`click`, () => {
+  let number = +output.textContent;
+  if (number !== 0) {
+    number /= 100;
+  }
+  output.textContent = number;
 });
 
 for (let number of numbers) {
