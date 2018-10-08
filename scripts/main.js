@@ -1,8 +1,16 @@
 const output = document.querySelector(`.output`);
+const clear = document.querySelector(`.clear`);
 const numbers = document.querySelectorAll(`.number`);
 
+clear.addEventListener(`click`, () => {
+  output.textContent = `0`;
+});
+
 for (let number of numbers) {
-  number.addEventListener(`click`, () => {
+  number.addEventListener(`click`, (event) => {
+    if (output.textContent === `0` && number.textContent !== `.`) {
+      output.textContent = ``;
+    }
     output.textContent += number.textContent;
   });
 }
