@@ -3,35 +3,61 @@ const clear = document.querySelector(`.clear`);
 const sign = document.querySelector(`.sign`);
 const perc = document.querySelector(`.perc`);
 const numbers = document.querySelectorAll(`.number`);
+const operations = document.querySelectorAll(`.operation`);
+const equal = document.querySelector(`.equal`);
+
+let scrValue = `0`;
+let num1 = 0;
+let num2 = 0;
+let operator = ``;
 
 clear.addEventListener(`click`, () => {
-  output.textContent = `0`;
+  scrValue = `0`;
+  showOutput(scrValue);
 });
 
 sign.addEventListener(`click`, () => {
-  let string = output.textContent;
-  if (string.startsWith(`-`)) {
-    output.textContent = string.substring(1);
+  if (scrValue.startsWith(`-`)) {
+    scrValue = scrValue.substring(1);
   } else {
-    output.textContent = `-${string}`;
+    scrValue = `-${scrValue}`;
   }
+  showOutput(scrValue);
 });
 
 perc.addEventListener(`click`, () => {
-  let number = +output.textContent;
-  if (number !== 0) {
-    number /= 100;
+  if (scrValue !== `0`) {
+    scrValue = +scrValue / 100;
   }
-  output.textContent = number;
+  showOutput(scrValue);
 });
 
 for (let number of numbers) {
-  number.addEventListener(`click`, (event) => {
-    if (output.textContent === `0` && number.textContent !== `.`) {
-      output.textContent = ``;
+  number.addEventListener(`click`, () => {
+    if (scrValue === `0` && number.textContent !== `.`) {
+      scrValue = ``;
     }
-    output.textContent += number.textContent;
+    scrValue += number.textContent;
+    showOutput(scrValue);
   });
+}
+
+for (let operation of operations) {
+  operation.addEventListener(`click`, (event) => {
+    num1 = +scrValue;
+    scrValue = `0`;
+    operator = event.target.textContent;
+  });
+}
+
+equal.addEventListener(`click`, () => {
+  num2 = +scrValue;
+  scrValue = operate(operator, num1, num2).toString();
+  showOutput(scrValue);
+});
+
+function showOutput(string) {
+  output.textContent = string;
 }
 
 function operate(operator, num1, num2) {
