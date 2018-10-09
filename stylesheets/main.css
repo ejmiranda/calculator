@@ -44,19 +44,19 @@ button:hover {
   cursor: pointer;
 }
 
-.other:hover,
+.special:hover,
 .operation:hover,
 .equal:hover {
   filter: brightness(130%);
 }
 
-.other,
+.special,
 .number {
   float: right;
   font-size: 1.85em;
 }
 
-.other {
+.special {
   background-color: #a5a5a5;
   color: black;
 }
