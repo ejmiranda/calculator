@@ -10,6 +10,7 @@ let scrValue = `0`;
 let num1 = 0;
 let num2 = 0;
 let operator = ``;
+let isAfterOpSelect = false;
 
 clear.addEventListener(`click`, () => {
   scrValue = `0`;
@@ -34,8 +35,10 @@ perc.addEventListener(`click`, () => {
 
 for (let number of numbers) {
   number.addEventListener(`click`, () => {
-    if (scrValue === `0` && number.textContent !== `.`) {
+    deselectOperations();
+    if ((scrValue === `0` && number.textContent !== `.`) || isAfterOpSelect) {
       scrValue = ``;
+      isAfterOpSelect = false;
     }
     scrValue += number.textContent;
     showOutput(scrValue);
@@ -44,20 +47,30 @@ for (let number of numbers) {
 
 for (let operation of operations) {
   operation.addEventListener(`click`, (event) => {
-    num1 = +scrValue;
-    scrValue = `0`;
+    deselectOperations();
+    operation.classList.add(`selected`);
     operator = event.target.textContent;
+    num1 = +scrValue;
+    isAfterOpSelect = true;
   });
 }
 
 equal.addEventListener(`click`, () => {
+  deselectOperations();
   num2 = +scrValue;
   scrValue = operate(operator, num1, num2).toString();
   showOutput(scrValue);
+  console.log(num1, operator, num2);
 });
 
 function showOutput(string) {
   output.textContent = string;
+}
+
+function deselectOperations() {
+  for (let operation of operations) {
+    operation.classList.remove(`selected`);
+  }
 }
 
 function operate(operator, num1, num2) {
