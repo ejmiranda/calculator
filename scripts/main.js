@@ -57,6 +57,14 @@ for (let operation of operations) {
     value = `0`;
     isAfterOpSelect = true;
   });
+  operation.addEventListener(`mouseover`, () => {
+    if (operation.classList.value.includes(`selected`)) {
+      operation.classList.add(`hover`);
+    }
+  });
+  operation.addEventListener(`mouseout`, () => {
+    operation.classList.remove(`hover`);
+  });
 }
 
 equal.addEventListener(`click`, () => {
@@ -85,7 +93,8 @@ function showOutput(string) {
   let regexp = /\B(?=(\d{3})+(?!\d))/g;
   let strArray = string.split(`.`);
   strArray[0] = strArray[0].replace(regexp, `,`);
-  output.textContent = strArray.join(`.`);
+  string = strArray.join(`.`);
+  output.textContent = string;
 }
 
 // Regular Expression Explanation:
