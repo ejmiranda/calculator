@@ -37,9 +37,13 @@ perc.addEventListener(`click`, () => {
 for (let number of numbers) {
   number.addEventListener(`click`, () => {
     deselectOperations();
-    if ((/-*0$/.test(value) && number.textContent !== `.`) 
+    if ((/^-*0$/.test(value) && number.textContent !== `.`) 
         || isAfterOpSelect) {
-      value = /-/.test(value) ? `-` : ``;
+      if (number.textContent === `.`) { // `.` afterOpSelect
+        value = 0;
+      } else {
+        value = /-/.test(value) ? `-` : ``;
+      }
       isAfterOpSelect = false;
     }
     value += number.textContent;
@@ -90,8 +94,14 @@ function checkDot(string) {
 }
 
 function showOutput(string) {
+  let maxDigits = (string.startsWith(`-`)) ? 10 : 9;
+  if (string.includes(`.`)) {
+    maxDigits++;
+  }
+  let strArray = string.split(``);
+  strArray.splice(maxDigits);
+  strArray = strArray.join(``).split(`.`);
   let regexp = /\B(?=(\d{3})+(?!\d))/g;
-  let strArray = string.split(`.`);
   strArray[0] = strArray[0].replace(regexp, `,`);
   string = strArray.join(`.`);
   output.textContent = string;
@@ -149,5 +159,5 @@ function divide(num1, num2) {
   if (num2 !== 0) {
     return num1 / num2;  
   }
-  return `ERROR`;
+  return `Error`;
 }
