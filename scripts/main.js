@@ -101,9 +101,33 @@ function showOutput(string) {
   let strArray = string.split(``);
   strArray.splice(maxDigits);
   strArray = strArray.join(``).split(`.`);
-  let regexp = /\B(?=(\d{3})+(?!\d))/g;
-  strArray[0] = strArray[0].replace(regexp, `,`);
+  strArray[0] = strArray[0].replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
   string = strArray.join(`.`);
+  
+  // IN PROGRESS
+
+  switch (string.length) {
+    case 7:
+      output.style.fontSize = `77px`;
+      break;
+    case 9:
+      output.style.fontSize = `64px`;
+      break;
+    case 10:
+      output.style.fontSize = `57px`;
+      break;
+    case 11:
+      output.style.fontSize = `51px`;
+      break;
+    case 12:
+      output.style.fontSize = `47px`;
+      break;
+    default:
+      output.style.fontSize = `80px`;
+  }
+
+  // IN PROGRESS
+
   output.textContent = string;
 }
 
