@@ -1,6 +1,20 @@
+@font-face {
+  font-display: swap;
+  font-family: 'SF-Pro-Display-Regular';
+  src: url(fonts/SF-Pro-Display-Regular.otf) 
+       format('opentype');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'SF-Pro-Display-Light';
+  src: url(fonts/SF-Pro-Display-Light.otf) 
+       format('opentype');
+}
+
 body {
   background-color: black;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'SF-Pro-Display-Regular', Arial, Helvetica, sans-serif;
 }
 
 .container,
@@ -14,10 +28,20 @@ body {
 
 .display {
   color: white;
-  font-size: 40px;
+  font-size: 80px;
   height: 130px;
   padding: 40px 18px 10px 0;
-  text-align: right; 
+  text-align: right;
+
+  /* DELETE */
+  background-color: red;
+}
+
+.output {
+  font-family: 'SF-Pro-Display-Light', Arial, Helvetica, sans-serif;
+
+  /* DELETE */
+  background-color: blue;
 }
 
 .left {
@@ -54,20 +78,25 @@ button:hover {
 .special,
 .number {
   float: right;
-  font-size: 1.85em;
 }
 
 .special {
   background-color: #a5a5a5;
   color: black;
+  font-size: 1.5em;
+}
+
+.clear {
+  font-size: 1.80em;
 }
 
 .number {
   background-color: #333;
+  font-size: 2em;
 }
 
 .zero {
-  padding-left: 29px;
+  padding-left: 27px;
   text-align: left;
   width: 150px;
 }
@@ -75,7 +104,7 @@ button:hover {
 .operation,
 .equal {
   background-color: #ee9b34;
-  font-size: 2.5em;
+  font-size: 2.3em;
 }
 
 .selected {
