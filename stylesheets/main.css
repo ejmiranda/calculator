@@ -27,7 +27,7 @@ body {
 .display {
   color: white;
   font-size: 80px;
-  padding: 0 18px 10px 0; /* CHECK */
+  padding: 0 18px 10px 0;
   text-align: right;
 }
 

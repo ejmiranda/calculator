@@ -1,4 +1,3 @@
-const display = document.querySelector(`.display`);
 const output = document.querySelector(`.output`);
 const clear = document.querySelector(`.clear`);
 const sign = document.querySelector(`.sign`);
@@ -12,20 +11,44 @@ let value = `0`;
 let num1 = 0;
 let num2 = 0;
 let operator = ``;
-let isAfterOpSelect = false;
+let isAfterOp = false;
+
+function logAll(){
+  console.log(`value = ${value}`);
+  console.log(`num1 = ${num1}`);
+  console.log(`operator = \`${operator}\``);
+  console.log(`num2 = ${num2}`);
+}
 
 clear.addEventListener(`click`, () => {
+  console.log(clear.textContent);
+  if (clear.textContent === `AC`) {
+    setOperationState(`deselectAll`);
+    num1 = 0;
+    num2 = 0;
+    operator = ``;
+  } else {
+    setOperationState(`selected`);
+    clear.textContent = `AC`;
+  }
   value = `0`;
+  checkDot();
   showOutput(value);
+  logAll();
 });
 
 sign.addEventListener(`click`, () => {
+  if (isAfterOp) {
+    value = `0`;
+    isAfterOp = false;
+  }
   if (value.startsWith(`-`)) {
     value = value.substring(1);
   } else {
     value = `-${value}`;
   }
   showOutput(value);
+  logAll();
 });
 
 perc.addEventListener(`click`, () => {
@@ -37,30 +60,35 @@ perc.addEventListener(`click`, () => {
 
 for (let number of numbers) {
   number.addEventListener(`click`, () => {
-    deselectOperations();
-    if ((/^-*0$/.test(value) && number.textContent !== `.`) 
-        || isAfterOpSelect) {
-      if (number.textContent === `.`) { // `.` afterOpSelect
-        value = 0;
-      } else {
-        value = /-/.test(value) ? `-` : ``;
-      }
-      isAfterOpSelect = false;
+    if (isAfterOp) {
+      value = (number.textContent === `.`) ? `0` : ``;
+      isAfterOp = false;
+    } else if (/^-*0$/.test(value) && number.textContent !== `.`) {
+      value = /-/.test(value) ? `-` : ``;
     }
     value += number.textContent;
+    setClear();
+    setOperationState(`deselectAll`);
     checkDot(value);
     showOutput(value);
+    logAll();
   });
 }
 
 for (let operation of operations) {
   operation.addEventListener(`click`, (event) => {
-    deselectOperations();
-    operation.classList.add(`selected`);
-    operator = event.target.textContent;
     num1 = +value;
-    value = `0`;
-    isAfterOpSelect = true;
+    operator = event.target.textContent;
+    isAfterOp = true;
+    setOperationState(`selected`);
+    logAll();
+    // num1 = +value;
+    // value = `0`;
+    // operator = event.target.textContent;
+    // isAfterOpSelect = true;
+    // setOperationState(`selected`);
+    // console.log(num1);
+
   });
   operation.addEventListener(`mouseover`, () => {
     if (operation.classList.value.includes(`selected`)) {
@@ -73,16 +101,34 @@ for (let operation of operations) {
 }
 
 equal.addEventListener(`click`, () => {
-  deselectOperations();
+  setOperationState(`deselectAll`);
   num2 = +value;
   value = operate(operator, num1, num2).toString();
   showOutput(value);
-  console.log(num1, operator, num2);
+  console.log(`${num1} ${operator} ${num2} = ${value}`);
 });
 
-function deselectOperations() {
-  for (let operation of operations) {
-    operation.classList.remove(`selected`);
+function setClear() {
+  if (value !== `0`) {
+    clear.textContent = `C`;
+  }
+}
+
+function setOperationState(action) {
+  switch (action) {
+    case `deselectAll`:
+      for (let operation of operations) {
+        operation.classList.remove(`selected`);
+      }   
+      break;
+    case `selected`:
+      setOperationState(`deselectAll`);
+      for (let operation of operations) {
+        if (operation.textContent === operator) {
+          operation.classList.add(`selected`);
+        }
+      }   
+      break;
   }
 }
 
