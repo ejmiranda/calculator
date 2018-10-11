@@ -1,15 +1,13 @@
 @font-face {
   font-display: swap;
   font-family: 'SF-Pro-Display-Regular';
-  src: url(fonts/SF-Pro-Display-Regular.otf) 
-       format('opentype');
+  src: url(fonts/SF-Pro-Display-Regular.otf);
 }
 
 @font-face {
   font-display: swap;
   font-family: 'SF-Pro-Display-Light';
-  src: url(fonts/SF-Pro-Display-Light.otf) 
-       format('opentype');
+  src: url(fonts/SF-Pro-Display-Light.otf);
 }
 
 body {
@@ -23,25 +21,19 @@ body {
 }
 
 .container {
-  margin: 80px auto;
+  margin: 120px auto;
 }
 
 .display {
   color: white;
   font-size: 80px;
-  height: 130px;
-  padding: 40px 18px 10px 0;
+  padding: 0 18px 10px 0; /* CHECK */
   text-align: right;
-
-  /* DELETE */
-  background-color: red;
 }
 
 .output {
   font-family: 'SF-Pro-Display-Light', Arial, Helvetica, sans-serif;
-
-  /* DELETE */
-  background-color: blue;
+  display: inline-block;
 }
 
 .left {

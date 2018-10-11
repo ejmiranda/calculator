@@ -1,3 +1,4 @@
+const display = document.querySelector(`.display`);
 const output = document.querySelector(`.output`);
 const clear = document.querySelector(`.clear`);
 const sign = document.querySelector(`.sign`);
@@ -94,17 +95,16 @@ function checkDot(string) {
 }
 
 function showOutput(string) {
+  
   let maxDigits = (string.startsWith(`-`)) ? 10 : 9;
-  if (string.includes(`.`)) {
-    maxDigits++;
-  }
+  if (string.includes(`.`)) maxDigits++;
   let strArray = string.split(``);
   strArray.splice(maxDigits);
-  strArray = strArray.join(``).split(`.`);
+  string = strArray.join(``);
+
+  strArray = string.split(`.`);
   strArray[0] = strArray[0].replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
   string = strArray.join(`.`);
-  
-  // IN PROGRESS
 
   switch (string.length) {
     case 7:
@@ -126,12 +126,10 @@ function showOutput(string) {
       output.style.fontSize = `80px`;
   }
 
-  // IN PROGRESS
-
   output.textContent = string;
 }
 
-// Regular Expression Explanation:
+// Regular Expression Explanation: /\B(?=(\d{3})+(?!\d))/g
 //
 // From Elias Zamaria @ StackOverflow: https://goo.gl/qpfC1r
 //
