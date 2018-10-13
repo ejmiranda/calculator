@@ -171,15 +171,43 @@ function showOutput(string) {
 }
 
 function formatForScr(string) {
-  
   if (string !== `NaN`) {
     
+    // The longest string to display will have at most:
+    // 9 numbers
+    // 2 commas || 1 comma && 1 dot || 1 dot
+    // - sign || no sign
+    // 
+    // Case 1: 2 commas -> Max length = 11 w/o sign & 12 w/ sign
+    // Sample:  - 3 3 3 , 3 3 3 , 3  3  3
+    // Digits:  1 2 3 4 5 6 7 8 9 10 11 12
+    //
+    // Case 2: 1 comma && 1 dot -> Max length = 11 w/o sign & 12 w/ sign
+    // Sample:  - 3 3 , 3 3 3 . 3 3  3  3
+    // Digits:  1 2 3 4 5 6 7 8 9 10 11 12
+    //
+    // Case 3: 1 dot -> Max length = 10 w/o sign & 11 w/ sign
+    // Sample:  - 3 . 3 3 3 3 3 3 3  3 <- Only 9 numbers allowed 
+    // Digits:  1 2 3 4 5 6 7 8 9 10 11
+    //
+    // SPECIAL CASE
+    // Case 4: Exponential Syntax -> Max length = 10 w/o sign & 11 w/ sign
+    // Sample:  - 3 . 3 3 3 3 e + 3  3 <- doEqual() sets 4 #s after the dot
+    // Digits:  1 2 3 4 5 6 7 8 9 10 11
+    //
+    // This function will add the required commas.
+    // The string will come with everything else.
+    //
+    // There are 3 steps:
+
+    // 1. Shorten the string to the max length before the commas
     let maxDigits = (string.startsWith(`-`)) ? 10 : 9;
     if (string.includes(`.`)) maxDigits++;
     let strArray = string.split(``);
     strArray.splice(maxDigits);
     string = strArray.join(``);
 
+    // 2. Add the required commas to the integer part
     strArray = string.split(`.`);
     strArray[0] = strArray[0].replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
     string = strArray.join(`.`);
@@ -207,43 +235,23 @@ function formatForScr(string) {
     // "9" after it, so no comma goes there. And so on. The "\B" keeps
     // the regex from putting a comma at the beginning of the string.
 
-    // switch (string.length) {
-    //   case 7:
-    //     output.style.fontSize = `77px`;
-    //     break;
-    //   case 8:
-    //     output.style.fontSize = `70px`;
-    //     break;
-    //   case 9:
-    //     output.style.fontSize = `64px`;
-    //     break;
-    //   case 10:
-    //     output.style.fontSize = `57px`;
-    //     break;
-    //   case 11:
-    //     output.style.fontSize = `51px`;
-    //     break;
-    //   case 12:
-    //     output.style.fontSize = `47px`;
-    //     break;
-    //   default:
-    //     output.style.fontSize = `80px`;
-    // }
-
-    if (string.length > 5) {
-      let width = 284 / (string.length);
-      let size = width * 1.67565407758064;
+    // 3. Set the font size to accomodate all digits on the screen
+    if (string.length > 6) {
+      let canvas = document.createElement(`canvas`);
+      let context = canvas.getContext(`2d`);
+      context.font = `80px 'SF-Pro-Display-Light'`;
+      let metrics = context.measureText(string);
+      let widthToHeightRatio = metrics.width / 80;
+      let size = 284 / widthToHeightRatio; // The output is set to 284px;
       output.style.fontSize = `${size}px`;
+    } else {
+      output.style.fontSize = `80px`;
     }
 
     return string;
-
   } else {
-    
     return `Error`;
-
   }
-
 }
 
 function logAll(key) {
