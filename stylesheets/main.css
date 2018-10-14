@@ -61,9 +61,17 @@ button:hover {
   filter: brightness(210%);
 }
 
+.number-hover { /* For adding/removing manually on key press */
+  filter: brightness(210%);
+}
+
 .special:hover,
-.operation:hover,
+.operator:hover,
 .equal:hover {
+  filter: brightness(130%);
+}
+
+.others-hover { /* For adding/removing manually on key press */
   filter: brightness(130%);
 }
 
@@ -93,7 +101,7 @@ button:hover {
   width: 150px;
 }
 
-.operation,
+.operator,
 .equal {
   background-color: #ee9b34;
   font-size: 2.3em;
@@ -104,6 +112,6 @@ button:hover {
   color: #ee9b34;
 }
 
-.hover {
+.selected-hover {
   background-color: #fdad7f;
 }
