@@ -35,20 +35,20 @@ for (let operator of operators) {
   });
 }
 
-equal.addEventListener(`click`, (event) => {
-  equalKey(event.target);
+equal.addEventListener(`click`, () => {
+  equalKey();
 });
 
-clear.addEventListener(`click`, (event) => {
-  clearKey(event.target.textContent);
+clear.addEventListener(`click`, () => {
+  clearKey();
 });
 
-sign.addEventListener(`click`, (event) => {
-  signKey(event.target.textContent);
+sign.addEventListener(`click`, () => {
+  signKey();
 });
 
-perc.addEventListener(`click`, (event) => {
-  percKey(event.target.textContent);
+perc.addEventListener(`click`, () => {
+  percKey();
 });
 
 window.addEventListener(`keydown`, (event) => {
@@ -61,17 +61,32 @@ window.addEventListener(`keydown`, (event) => {
     }
   } else if (/[-\/*\+=]|Enter\b/.test(event.key)) {
     if (event.key !== `=` && event.key !== `Enter`) {
-      operatorKey(event.key);
+      let key;
+      switch (event.key) {
+        case `/`:
+          key = `÷`;
+          break;
+        case `*`:
+          key = `×`;
+          break;
+        case `-`:
+          key = `−`;
+          break;
+        case `+`:
+          key = `+`;
+          break;
+      }
+      operatorKey(key);
     } else {
       doKeyHover(equal.textContent);
-      equalKey(event.key);
+      equalKey();
     }
   } else if (/[cC]\b|Backspace\b/u.test(event.key)) {
     doKeyHover(clear.textContent);
-    clearKey(event.key);
+    clearKey();
   } else if (event.key === `%`) {
     doKeyHover(perc.textContent);
-    percKey(event.key);
+    percKey();
   }
 });
 
@@ -99,15 +114,18 @@ function numberKey(key) {
     }
     isAfterOp = false;
     isAfterEq = false;
-  } else if (/^-*0$/.test(val) && key !== `.`) {
+  } else if (/^-?0$/.test(val) && key !== `.`) {
     val = /-/.test(val) ? `-` : ``;
   }
-  val += key;
+  let maxLength = (val.includes(`-`)? 10 : 9);
+  if (val.includes(`.`)) maxLength++;
+  if (val.length < maxLength) {
+    val += key;
+  }
   setClear();
   showOutput();
   checkDot();
   setOperatorState(`deselectAll`);
-  logAll(key);
 }
 
 function operatorKey(key) {
@@ -123,24 +141,18 @@ function operatorKey(key) {
   isAfterEq = false;
   checkDot();
   setOperatorState(`selected`);
-  logAll(key);
 }
 
-function equalKey(key) {
+function equalKey() {
   doEqual();
   isChainable = false;
   isAfterOp = false;
   isAfterEq = true;
   checkDot();
   setOperatorState(`deselectAll`);
-  if (key === `Enter`) {
-    key = `${key} -> ${equal.textContent}`;   
-  }
-  logAll(key);
 }
 
 function clearKey(key) {
-  let keyToLog = `${key} -> ${clear.textContent}`;
   if (clear.textContent === `AC`) {
     num1 = 0;
     op = ``;
@@ -160,13 +172,13 @@ function clearKey(key) {
   val = `0`;
   showOutput();
   checkDot();
-  logAll(keyToLog);
 }
 
-function signKey(key) {
-  if (isAfterOp) {
+function signKey() {
+  if (isAfterOp || isAfterEq) {
     val = `0`;
     isAfterOp = false;
+    isAfterEq = false;
   }
   if (val.startsWith(`-`)) {
     val = val.substring(1);
@@ -174,16 +186,14 @@ function signKey(key) {
     val = `-${val}`;
   }
   showOutput();
-  logAll(key);
 }
 
-function percKey(key) {
+function percKey() {
   if (val !== `0`) {
     val = (+val / 100).toString();
   }
   showOutput();
   checkDot();
-  logAll(key);
 }
 
 function doEqual() {
@@ -194,9 +204,6 @@ function doEqual() {
     val = operate(op, num1, num2);
     if (val !== `Error`) {
       val = val.toPrecision();
-      if (val.length > 10) {
-        val = (+val).toExponential(4);
-      }
     }
     num1 = +val;
   }
@@ -245,80 +252,25 @@ function showOutput() {
   output.textContent = formatForScr(val);
 }
 
-function formatForScr(string) {
-  if (string !== `NaN`) {
-    
-    // The longest string to display will have at most:
-    // 9 numbers
-    // 2 commas || 2 commas && 1 dot || 1 comma && 1 dot || 1 dot
-    // - sign || no sign
-    // 
-    // Case 1: 2 commas -> Max length = 11 w/o sign & 12 w/ sign
-    // Sample:  - 3 3 3 , 3 3 3 , 3  3  3 <- Only 9 numbers allowed 
-    // Digits:  1 2 3 4 5 6 7 8 9 10 11 12
-    //
-    // Case 2: 2 commas && 1 dot -> Max length = 12 w/o sign & 13 w/ sign
-    // Sample:  - 3 , 3 3 3 , 3 3 3  .  3  3 <- Only 9 numbers allowed
-    // Digits:  1 2 3 4 5 6 7 8 9 10 11 12 13
-    //
-    // Case 3: 1 comma && 1 dot -> Max length = 11 w/o sign & 12 w/ sign
-    // Sample:  - 3 3 , 3 3 3 . 3 3  3  3 <- Only 9 numbers allowed
-    // Digits:  1 2 3 4 5 6 7 8 9 10 11 12
-    //
-    // Case 4: 1 dot -> Max length = 10 w/o sign & 11 w/ sign
-    // Sample:  - 3 . 3 3 3 3 3 3 3  3 <- Only 9 numbers allowed
-    // Digits:  1 2 3 4 5 6 7 8 9 10 11
-    //
-    // SPECIAL CASE
-    // Case 5: Exponential Syntax -> Max length = 10 w/o sign & 11 w/ sign
-    // Sample:  - 3 . 3 3 3 3 e + 3  3 <- doEqual() sets 4 #s after the dot
-    // Digits:  1 2 3 4 5 6 7 8 9 10 11
-    //
-    // This function will add the required commas.
-    // The string will come with everything else.
-    //
-    // There are 3 steps:
-
-    // 1. Shorten the string to the max length before the commas
-    let maxDigits = (string.startsWith(`-`)) ? 10 : 9;
-    if (string.includes(`.`)) maxDigits++;
-    let strArray = string.split(``);
-    strArray.splice(maxDigits);
-    string = strArray.join(``);
-
-    // 2. Add the required commas to the integer part
-    strArray = string.split(`.`);
-    strArray[0] = strArray[0].replace(/\B(?=(\d{3})+(?!\d))/g, `,`);
-    string = strArray.join(`.`);
-
-    // Regular Expression Explanation: /\B(?=(\d{3})+(?!\d))/g
-    //
-    // From Elias Zamaria @ StackOverflow: https://goo.gl/qpfC1r
-    //
-    // The regex uses 2 lookahead assertions: a positive one to look for
-    // any point in the string that has a multiple of 3 digits in a row
-    // after it, and a negative assertion to make sure that point only
-    // has exactly a multiple of 3 digits. The replacement expression
-    // puts a comma there.
-    //
-    // For example, if you pass it "123456789.01", the positive assertion
-    // will match every spot to the left of the 7 (since "789" is a 
-    // multiple of 3 digits, "678" is a multiple of 3 digits, "567", etc.).
-    // The negative assertion checks that the multiple of 3 digits does
-    // not have any digits after it. "789" has a period after it so it is
-    // exactly a multiple of 3 digits, so a comma goes there. "678" is a
-    // multiple of 3 digits but it has a "9" after it, so those 3 digits
-    // are part of a group of 4, and a comma does not go there. Similarly
-    // for "567". "456789" is 6 digits, which is a multiple of 3, so a
-    // comma goes before that. "345678" is a multiple of 3, but it has a
-    // "9" after it, so no comma goes there. And so on. The "\B" keeps
-    // the regex from putting a comma at the beginning of the string.
-
-    // 3. Set the font size to accomodate all digits on the screen
+function formatForScr(numStr) {
+  if (numStr !== `NaN`) {
+    if (/^-?\d{10}/.test(numStr)) {
+      numStr = (+numStr).toExponential(4);
+    } else {
+      let maxLength = (numStr.includes(`-`)) ? 10 : 9;
+      if (numStr.includes(`.`)) maxLength++;
+      if (numStr.length > maxLength) {
+          numStr = (+numStr).toPrecision(9);
+      }
+      let numParts = numStr.split(`.`);
+      numParts[0] = numParts[0].replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
+      // Regular Expression Explanation: https://goo.gl/qpfC1r
+      numStr = numParts.join(`.`);
+    }
     let canvas = document.createElement(`canvas`);
     let context = canvas.getContext(`2d`);
     context.font = `80px 'SF-Pro-Display-Light'`;
-    let metrics = context.measureText(string);
+    let metrics = context.measureText(numStr);
     if (metrics.width > 284) { // The output is set to 284px;
       let widthToHeightRatio = metrics.width / 80;
       let size = 284 / widthToHeightRatio;
@@ -326,8 +278,7 @@ function formatForScr(string) {
     } else {
       output.style.fontSize = `80px`;
     }
-
-    return string;
+    return numStr;
   } else {
     return `Error`;
   }
@@ -356,13 +307,4 @@ function setOperatorState(action) {
       }   
       break;
   }
-}
-
-function logAll(key) {
-  console.log(`Key Pressed = \`${key}\``);
-  console.log(`Screen Value = \`${formatForScr(val)}\``);
-  console.log(`val = \`${val}\`, num1 = ${num1}, op = \`${op}\`, num2 = ${num2}`);
-  console.log(`isAfterOp = ${isAfterOp}, isAfterEq = ${isAfterEq}, isChainable = ${isChainable}`);
-  console.log(`The \`.\` is ${(dot.disabled) ? `disabled` : `enabled`}`);
-  console.log(``);
 }
