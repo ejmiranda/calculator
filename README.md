@@ -12,4 +12,4 @@
 - Implement `Clear`, `+/-`, `%`.
 - Replicate iOS calculator style (2018).
 
-> **_"Even a fool gets to be young once"_** - Frank Lucas
+> **_"Even a fool gets to be young once."_** - Frank Lucas
